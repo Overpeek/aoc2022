@@ -6,7 +6,7 @@ fn main(input: &str) -> (i32, i32) {
 
     let p1 = iter
         .clone()
-        .map(|[a, b]| (1 - (a as i8 - b as i8)).rem_euclid(3) as u8 * 3 + b + 1)
+        .map(|[a, b]| (1 - (a - b) as i8).rem_euclid(3) as u8 * 3 + b + 1)
         .map(|i| i as i32)
         .sum::<i32>();
 
