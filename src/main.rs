@@ -7,6 +7,7 @@ use std::{
 //
 
 mod day1;
+mod day2;
 
 //
 
@@ -20,6 +21,7 @@ fn main() {
     }
 
     day1::run();
+    day2::run();
 }
 
 #[macro_export]
@@ -37,6 +39,16 @@ macro_rules! bp {
 
             let (part1, part2) = main(input);
             crate::print_result($n, part1, part2);
+        }
+    };
+}
+
+#[macro_export]
+macro_rules! match_unwrap {
+    ($test:expr, $pat:tt => $code:tt) => {
+        match $test {
+            $pat => $code,
+            _ => unreachable!(),
         }
     };
 }
