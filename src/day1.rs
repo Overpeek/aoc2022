@@ -1,16 +1,12 @@
-fn main(input: &str) -> (i32, i32) {
+fn main(input: &str) -> impl crate::Results {
     let mut top_3 = [0, 0, 0];
-    for cals in input.split("\n\n").map(|elf| {
-        elf.lines()
-            .map(|s| s.parse::<i32>().expect("Input format error"))
-            .sum::<i32>()
-    }) {
-        let v = top_3
-            .iter_mut()
-            .min()
-            .expect("`top_3` is certainly not empty");
-        *v = cals.max(*v);
-    }
+    input
+        .split("\n\n")
+        .map(|elf| elf.lines().map(|s| s.parse::<i32>().unwrap()).sum::<i32>())
+        .for_each(|cals| {
+            let v = top_3.iter_mut().min().unwrap();
+            *v = cals.max(*v);
+        });
 
     (
         top_3.iter().copied().max().unwrap_or(0),

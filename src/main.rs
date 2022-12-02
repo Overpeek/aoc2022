@@ -37,8 +37,7 @@ macro_rules! bp {
                 include_str!(concat!(concat!(concat!("day"), stringify!($n)), ".txt"))
             };
 
-            let (part1, part2) = main(input);
-            crate::print_result($n, part1, part2);
+            crate::Results::print(&main(input), $n)
         }
     };
 }
@@ -53,6 +52,15 @@ macro_rules! match_unwrap {
     };
 }
 
-fn print_result<T: Display, U: Display>(day: u8, part1: T, part2: U) {
-    println!("Day {day} results:\nPart 1: {part1}\nPart 2: {part2}\n\n");
+trait Results {
+    fn print(&self, day: u8);
+}
+
+impl<T: Display, U: Display> Results for (T, U) {
+    fn print(&self, day: u8) {
+        println!(
+            "Day {day} results:\nPart 1: {}\nPart 2: {}\n\n",
+            self.0, self.1
+        );
+    }
 }
