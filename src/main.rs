@@ -1,13 +1,19 @@
+#![feature(iter_array_chunks)]
+
+//
+
 use std::{
     env::args,
     fmt::Display,
     sync::atomic::{AtomicBool, Ordering},
+    time::Duration,
 };
 
 //
 
 mod day1;
 mod day2;
+mod day3;
 
 //
 
@@ -20,8 +26,12 @@ fn main() {
         TEST_MODE.store(true, Ordering::SeqCst);
     }
 
+    let start = std::time::Instant::now();
     day1::run();
     day2::run();
+    day3::run();
+    let time = start.elapsed();
+    println!("Total time: {time:?}");
 }
 
 #[macro_export]
@@ -37,7 +47,11 @@ macro_rules! bp {
                 include_str!(concat!(concat!(concat!("day"), stringify!($n)), ".txt"))
             };
 
-            crate::Results::print(&main(input), $n)
+            let start = std::time::Instant::now();
+            let result = main(input);
+            let time = start.elapsed();
+
+            crate::Results::print(&result, $n, time)
         }
     };
 }
@@ -53,13 +67,13 @@ macro_rules! match_unwrap {
 }
 
 trait Results {
-    fn print(&self, day: u8);
+    fn print(&self, day: u8, time: Duration);
 }
 
 impl<T: Display, U: Display> Results for (T, U) {
-    fn print(&self, day: u8) {
+    fn print(&self, day: u8, time: Duration) {
         println!(
-            "Day {day} results:\nPart 1: {}\nPart 2: {}\n\n",
+            "Day {day} results:\nPart 1: {}\nPart 2: {}\nTime: {time:?}\n",
             self.0, self.1
         );
     }
