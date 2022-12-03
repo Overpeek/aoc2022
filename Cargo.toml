@@ -10,4 +10,3 @@ default = []
 test = []
 
 [dependencies]
-anyhow = "1.0.66"
