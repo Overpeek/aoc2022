@@ -8,19 +8,15 @@ fn main(input: &str) -> impl crate::Results {
 
     let mut stacks = Vec::<Vec<_>>::new();
     stacks.resize(counts.split_whitespace().count(), Vec::new());
-    crates
-        .lines()
-        .take_while(|l| l.contains('['))
-        .map(str::chars)
-        .for_each(|s| {
-            s.skip(1)
-                .step_by(4)
-                .enumerate()
-                .filter(|(_, c)| *c != ' ')
-                .for_each(|(i, c)| {
-                    stacks[i].insert(0, c);
-                });
-        });
+    crates.lines().map(str::chars).for_each(|s| {
+        s.skip(1)
+            .step_by(4)
+            .enumerate()
+            .filter(|(_, c)| *c != ' ')
+            .for_each(|(i, c)| {
+                stacks[i].insert(0, c);
+            });
+    });
 
     // parse instructions
 
@@ -53,6 +49,7 @@ fn main(input: &str) -> impl crate::Results {
 
     let mut p2 = stacks;
     for [count, from, to] in instr.clone() {
+        // get 2 mutable references from a mutable slice ref
         let (from, to) = if from > to {
             let (a, b) = p2.split_at_mut(to + 1);
             (&mut b[from - to - 1], a.last_mut().unwrap())
