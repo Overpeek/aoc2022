@@ -1,11 +1,9 @@
 fn main(input: &str) -> impl crate::Results {
-    let iter = input.lines().map(|s| {
-        s.split(|c| c == ',' || c == '-')
-            .map(|s| s.parse::<u32>().unwrap())
-            .array_chunks::<4>()
-            .next()
-            .unwrap()
-    });
+    let iter = input
+        .lines()
+        .flat_map(|s| s.split(|c| c == ',' || c == '-'))
+        .filter_map(|s| s.parse::<u32>().ok())
+        .array_chunks::<4>();
 
     let p1 = iter
         .clone()
