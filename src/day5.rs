@@ -28,7 +28,7 @@ fn main(input: &str) -> impl crate::Results {
         s.split_whitespace()
             .skip(1)
             .step_by(2)
-            .map(|s| s.parse::<usize>().unwrap())
+            .map(|s| s.parse::<usize>().unwrap() - 1)
             .array_chunks::<3>()
             .next()
             .unwrap()
@@ -38,9 +38,9 @@ fn main(input: &str) -> impl crate::Results {
 
     let mut p1 = stacks.clone();
     for [count, from, to] in instr.clone() {
-        for _ in 0..count {
-            let cont = p1[from - 1].pop().unwrap();
-            p1[to - 1].push(cont);
+        for _ in 0..count + 1 {
+            let cont = p1[from].pop().unwrap();
+            p1[to].push(cont);
         }
     }
 
@@ -53,9 +53,15 @@ fn main(input: &str) -> impl crate::Results {
 
     let mut p2 = stacks;
     for [count, from, to] in instr.clone() {
-        let from = &mut p2[from - 1];
-        let moving = from.drain(from.len() - count..).collect::<Vec<_>>();
-        p2[to - 1].extend(moving);
+        let (from, to) = if from > to {
+            let (a, b) = p2.split_at_mut(to + 1);
+            (&mut b[from - to - 1], a.last_mut().unwrap())
+        } else {
+            let (a, b) = p2.split_at_mut(from + 1);
+            (a.last_mut().unwrap(), &mut b[to - from - 1])
+        };
+
+        to.extend(from.drain(from.len() - count - 1..));
     }
 
     let p2 = p2
