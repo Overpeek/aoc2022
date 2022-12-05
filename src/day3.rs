@@ -5,28 +5,40 @@ use std::collections::{HashMap, HashSet};
 fn main(input: &str) -> impl crate::Results {
     let iter = input.lines().map(|s| s.as_bytes());
 
+    let t = std::time::Instant::now();
     let p1 = iter
         .clone()
         .map(|s| s.split_at(s.len() / 2))
-        .flat_map(|(a, b)| {
-            let map = a.iter().copied().collect::<HashSet<_>>();
-            b.iter().copied().find(move |c| map.contains(c))
-        })
+        .flat_map(|(a, b)| b.iter().copied().find(move |c| a.contains(c)))
         .map(priority)
         .sum::<u32>();
+    println!("{:?}", t.elapsed());
 
+    let t = std::time::Instant::now();
     let p2 = iter
-        .map(|s| s.iter().copied().collect::<HashSet<_>>())
         .array_chunks::<3>()
         .flat_map(|s| {
-            let mut map = HashMap::<_, u8>::new();
-            s.iter().flat_map(|s| s.iter()).for_each(|c| {
-                *map.entry(c).or_default() += 1;
-            });
-            map.into_iter().find(|(_, v)| *v == 3).map(|(k, _)| *k)
+            let mut map = HashMap::<_, (u8, usize)>::new();
+            for (i, s) in s
+                .iter()
+                .enumerate()
+                .flat_map(|(i, s)| s.into_iter().map(move |c| (i, *c)))
+            {
+                let (entry, already_in) = map.entry(s).or_default();
+
+                if *already_in & (1 << i) == 0 {
+                    *already_in |= 1 << i;
+                    *entry += 1;
+                    if *entry == 3 {
+                        return Some(s);
+                    }
+                }
+            }
+            map.into_iter().find(|(_, (v, _))| *v == 3).map(|(k, _)| k)
         })
         .map(priority)
         .sum::<u32>();
+    println!("{:?}", t.elapsed());
 
     (p1, p2)
 }
