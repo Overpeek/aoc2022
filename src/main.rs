@@ -1,4 +1,5 @@
 #![feature(iter_array_chunks)]
+#![feature(split_array)]
 
 //
 
@@ -14,6 +15,9 @@ use std::{
 mod day1;
 mod day2;
 mod day3;
+mod day4;
+mod day5;
+// gen mod
 
 //
 
@@ -30,6 +34,9 @@ fn main() {
     day1::run();
     day2::run();
     day3::run();
+    day4::run();
+    day5::run();
+    // gen run
     let time = start.elapsed();
     println!("Total time: {time:?}");
 }
