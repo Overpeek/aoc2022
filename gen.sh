@@ -4,10 +4,10 @@ echo "Day number: "
 read day
 
 echo "fn main(input: &str) -> impl crate::Results {
-    (0, 0)
+    (\"todo\", \"todo\")
 }
 
-crate::bp!($day);" > "src/day$day.rs"
+crate::bp!($day);" >"src/day$day.rs"
 
 touch "src/day$day.txt"
 touch "src/day${day}_test.txt"
