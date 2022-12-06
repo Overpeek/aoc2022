@@ -19,13 +19,16 @@ fn main(input: &str) -> impl crate::Results {
             {
                 let (entry, already_in) = &mut map[s as usize];
 
-                if *already_in & (1 << i) == 0 {
-                    if *entry == 2 {
-                        return s;
-                    }
-                    *already_in |= 1 << i;
-                    *entry += 1;
+                if *already_in & (1 << i) != 0 {
+                    continue;
                 }
+
+                if *entry == 2 {
+                    return s;
+                }
+
+                *already_in |= 1 << i;
+                *entry += 1;
             }
             unreachable!()
         })
