@@ -1,7 +1,6 @@
 fn main(input: &str) -> impl crate::Results {
     let iter = input
-        .lines()
-        .flat_map(|s| s.split(|c| c == ',' || c == '-'))
+        .split(|c| c == '\n' || c == ',' || c == '-')
         .filter_map(|s| s.parse::<u32>().ok())
         .array_chunks::<4>();
 
