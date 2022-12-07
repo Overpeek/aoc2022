@@ -51,11 +51,14 @@ macro_rules! bp {
         pub fn run() {
             let input = if crate::TEST_MODE.load(std::sync::atomic::Ordering::SeqCst) {
                 include_str!(concat!(
-                    concat!(concat!("day"), stringify!($n)),
+                    concat!(concat!("input/day"), stringify!($n)),
                     "_test.txt"
                 ))
             } else {
-                include_str!(concat!(concat!(concat!("day"), stringify!($n)), ".txt"))
+                include_str!(concat!(
+                    concat!(concat!("input/day"), stringify!($n)),
+                    ".txt"
+                ))
             };
 
             let start = std::time::Instant::now();
