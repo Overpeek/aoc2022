@@ -1,46 +1,64 @@
 fn main(input: &str) -> impl crate::Results {
-    let height = input.lines().count();
-    let input = input.as_bytes();
-    let width = input.iter().take_while(|b| **b != b'\n').count();
+    let width = input.as_bytes().iter().take_while(|c| **c != b'\n').count();
 
-    // TODO: faster algo
+    let mut grid: Vec<_> = input
+        .as_bytes()
+        .iter()
+        .filter(|c| **c != b'\n')
+        .map(|c| (false, 1, *c))
+        .collect();
 
-    let mut count = (width * 2 + height * 2).max(4) - 4;
-    let mut max = 0;
-    for y in 1..height - 1 {
-        for x in 1..width - 1 {
-            let cell = input[x + y + y * width];
-
-            let row = input.iter().skip(y * width + y).take(width);
-            let col = input.iter().skip(x).step_by(width + 1).take(height);
-            let north = col.clone().take(y).rev();
-            let south = col.clone().skip(y + 1);
-            let west = row.clone().take(x).rev();
-            let east = row.clone().skip(x + 1);
-
-            let cmp = |c: &u8| *c < cell;
-            let vis = north.clone().all(cmp)
-                || south.clone().all(cmp)
-                || west.clone().all(cmp)
-                || east.clone().all(cmp);
-
-            let scan = |acc: &mut (i32, bool), height: &u8| {
-                acc.0 += 1;
-                let res = acc.1;
-                acc.1 = *height < cell;
-                res.then_some(())
-            };
-            let score = north.scan((0, true), scan).count()
-                * south.scan((0, true), scan).count()
-                * west.scan((0, true), scan).count()
-                * east.scan((0, true), scan).count();
-
-            count += vis as usize;
-            max = max.max(score);
-        }
+    for row in grid.chunks_mut(width) {
+        ray_cast(row.iter_mut());
+        ray_cast(row.iter_mut().rev());
+    }
+    for x in 0..width {
+        ray_cast(grid.iter_mut().skip(x).step_by(width));
+        ray_cast(grid.iter_mut().skip(x).step_by(width).rev());
     }
 
-    (count, max)
+    // println!("{input}");
+    // for line in grid.chunks(width) {
+    //     for (v, _, _) in line {
+    //         if *v {
+    //             print!("y");
+    //         } else {
+    //             print!("n");
+    //         }
+    //     }
+    //     println!();
+    // }
+
+    let p1 = grid.iter().filter(|(vis, _, _)| *vis).count();
+    let p2 = grid.iter().map(|(_, score, _)| *score).max().unwrap_or(0);
+
+    (p1, p2)
+}
+
+fn ray_cast(iter: impl Iterator<Item = &mut (bool, usize, u8)>) {
+    // p1
+    let mut highest = 0;
+    // p2
+    let mut index_of_last_specific_height = [usize::MAX; 11];
+    index_of_last_specific_height[10] = 0;
+    // shared
+    for (i, tree) in iter.enumerate() {
+        // p1
+        if highest < tree.2 {
+            highest = tree.2;
+            tree.0 = true;
+        }
+        // p2
+        let arr_i = (tree.2 - b'0') as usize;
+        tree.1 *= index_of_last_specific_height
+            .iter()
+            .skip(arr_i)
+            .filter(|s| **s != usize::MAX)
+            .map(|index| i - *index)
+            .min()
+            .unwrap_or(0);
+        index_of_last_specific_height[arr_i] = i;
+    }
 }
 
 crate::bp!(8);
