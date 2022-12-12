@@ -1,5 +1,6 @@
 #![feature(iter_array_chunks)]
 #![feature(split_array)]
+#![feature(anonymous_lifetime_in_impl_trait)]
 
 //
 
@@ -21,6 +22,8 @@ mod day4;
 mod day5;
 mod day6;
 mod day7;
+mod day8;
+mod day9;
 // gen mod
 
 //
@@ -52,6 +55,9 @@ fn main() {
         day5::run,
         day6::run,
         day7::run,
+        day8::run,
+        day9::run,
+        // gen run
     ]
     .into_par_iter()
     .map(|s| s())
@@ -60,7 +66,6 @@ fn main() {
         println!("{result}");
     }
 
-    // gen run
     let time = start.elapsed();
     println!("Total time: {time:?}");
 }
