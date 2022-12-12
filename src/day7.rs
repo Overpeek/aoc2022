@@ -23,10 +23,13 @@ fn rec<'a, F: FnMut(usize)>(iter: &mut impl Iterator<Item = &'a str>, f: &mut F)
 
     while let Some(cmd) = iter.next() {
         if cmd.starts_with("cd ..") {
+            // cd ..
             break;
         } else if cmd.starts_with("c") {
+            // cd somedir
             size += rec(iter, f)
         } else {
+            // ls
             let res = &cmd[3..];
             size += res
                 .lines()
