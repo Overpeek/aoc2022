@@ -1,5 +1,5 @@
 fn main(input: &str) -> impl crate::Results {
-    let mut iter = input.split("$ ").skip(1).flat_map(|s| s.split_once('\n'));
+    let mut iter = input.split("$ ").skip(1);
 
     let mut p1 = 0;
     let total = rec(&mut iter.clone(), &mut |size| {
@@ -18,19 +18,16 @@ fn main(input: &str) -> impl crate::Results {
     (p1, p2)
 }
 
-fn rec<'a, F: FnMut(usize)>(
-    iter: &mut impl Iterator<Item = (&'a str, &'a str)>,
-    f: &mut F,
-) -> usize {
+fn rec<'a, F: FnMut(usize)>(iter: &mut impl Iterator<Item = &'a str>, f: &mut F) -> usize {
     let mut size = 0_usize;
 
-    while let Some((cmd, res)) = iter.next() {
-        if let Some((_, path)) = cmd.split_once(' ') {
-            match path {
-                ".." => break,
-                _ => size += rec(iter, f),
-            }
+    while let Some(cmd) = iter.next() {
+        if cmd.starts_with("cd ..") {
+            break;
+        } else if cmd.starts_with("c") {
+            size += rec(iter, f)
         } else {
+            let res = &cmd[3..];
             size += res
                 .lines()
                 .filter_map(|s| s.split_once(' '))
